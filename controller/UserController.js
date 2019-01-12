@@ -23,6 +23,10 @@ class UserController {
 
                 let values = this.getValues();
 
+                if (!values) {
+                    return false;
+                }
+
                 this.getPhoto().then(
                     (content) => {
 
@@ -85,8 +89,14 @@ class UserController {
     getValues() {
 
             let user = {};
+            var isValid = true;
 
             [...this.formEl.elements].forEach((field, index) => {
+                if (['name', 'email', 'password'].indexOf(field.name) > -1 && !field.value) {
+                    field.parentElement.classList.add("has-error");
+                    isValid = false;
+                    return false;
+                }
                 if (field.name == "gender") {
                     //verificando se o gender está selecionado
                     if (field.checked) {
@@ -101,6 +111,10 @@ class UserController {
                     user[field.name] = field.value;
                 }
             });
+
+            if (!isValid) {
+                return false;
+            }
 
             return new User(
                 user.name,
